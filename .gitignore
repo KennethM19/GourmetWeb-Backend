@@ -1,0 +1,10 @@
+env
+**/__pycache__
+
+**/migrations/0*.py
+
+*.svg
+*.jpg
+*.jpeg
+*.png
+*.webp
