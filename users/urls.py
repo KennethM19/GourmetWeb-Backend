@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .api import UserViewSet, CardViewSet, RolesViewSet
+from .views import UserViewSet, CardViewSet, RolesViewSet, register_user
 
 router = routers.DefaultRouter()
 

@@ -36,6 +36,20 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 
 # Application definition
+EXTERNAL_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders'
+]
+
+INTERNAL_APPS = [
+    'kitchen',
+    'menu',
+    'notifications',
+    'orders',
+    'reservations',
+    'users'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,15 +57,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'kitchen',
-    'menu',
-    'notifications',
-    'orders',
-    'reservations',
-    'users',
-    'rest_framework'
-]
+    'django.contrib.staticfiles'
+] + EXTERNAL_APPS + INTERNAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,6 +69,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'GourmetWeb_Backend.urls'
@@ -116,6 +125,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:4200',
 ]
 
 
