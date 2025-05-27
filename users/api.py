@@ -1,7 +1,7 @@
-from .models import User, Card
+from .models import User, Card, Roles
 from rest_framework import viewsets, permissions
 
-from .serializers import UserSerializer, CardSerializer
+from .serializers import UserSerializer, CardSerializer, RolesSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -13,3 +13,8 @@ class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = CardSerializer
+
+class RolesViewSet(viewsets.ModelViewSet):
+    queryset = Roles.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RolesSerializer

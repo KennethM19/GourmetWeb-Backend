@@ -1,13 +1,23 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from .models import User, Card
+from .models import User, Card, Roles
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'doc_number', 'first_name', 'last_name', 'phone','email', 'password', 'role', 'date_created')
+        fields = '__all__'
         read_only_fields = ('date_created', )
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
 
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        fields = ('id', 'number', 'cvv', 'date_expired', 'owner', 'is_credit', 'user')
+        fields = '__all__'
+
+class RolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Roles
+        fields = '__all__'
