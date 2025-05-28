@@ -129,6 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
+    'https://gourmet-web-sand.vercel.app/',
 ]
 
 REST_FRAMEWORK = {
