@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from .models import User, Card, Roles
 
@@ -9,8 +8,15 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('date_created', )
 
     def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password'])
-        return super().create(validated_data)
+        raw_password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.password = self.hash_password(raw_password)
+        user.save()
+        return user
+
+    def hash_password(self, raw_password):
+        from django.contrib.auth.hashers import make_password
+        return make_password(raw_password)
 
 class CardSerializer(serializers.ModelSerializer):
     class Meta:

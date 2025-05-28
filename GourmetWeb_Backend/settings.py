@@ -38,7 +38,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 EXTERNAL_APPS = [
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'corsheaders'
 ]
 
@@ -130,6 +130,12 @@ AUTH_PASSWORD_VALIDATORS = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 
 # Internationalization
