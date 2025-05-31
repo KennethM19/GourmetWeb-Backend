@@ -1,12 +1,29 @@
 from django.urls import path
-from .views import register, get_user, login, get_card, register_card
+from .views import (
+    register, login, get_user, update_user, delete_user, change_password,
+    register_card, delete_card,
+    register_address, update_address, delete_address
+)
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('get-user/', get_user, name='user'),
-    path('login/', login, name='login'),
+    # Autenticación
     path('register/', register, name='register'),
+    path('login/', login, name='login'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('get-card/', get_card, name='get_card'),
-    path('register-card/', register_card, name='register-card'),
+
+    # Usuario
+    path('profile/', get_user, name='get_user'),
+    path('profile/update/', update_user, name='update_user'),
+    path('profile/delete/', delete_user, name='delete_user'),
+    path('profile/change-password/', change_password, name='change_password'),
+
+    # Tarjetas
+    path('cards/', register_card, name='register_card'),
+    path('cards/<int:card_id>/delete/', delete_card, name='delete_card'),
+
+    # Direcciones
+    path('addresses/', register_address, name='register_address'),
+    path('addresses/<int:address_id>/update/', update_address, name='update_address'),
+    path('addresses/<int:address_id>/delete/', delete_address, name='delete_address'),
 ]
