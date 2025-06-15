@@ -1,5 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import CustomUserManager
 
@@ -25,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=128)
-    role = models.ForeignKey('Roles', on_delete=models.CASCADE, default=1)
+    role = models.ForeignKey('Roles', on_delete=models.CASCADE, default=1, related_name='user')
     date_created = models.DateTimeField(auto_now_add=True)
 
     is_active = models.BooleanField(default=True)
@@ -41,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
 
 class Card(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cards')
     number = models.CharField(max_length=100)
     date_expired = models.DateTimeField(null=True)
     owner = models.CharField(max_length=100)
@@ -53,7 +54,7 @@ class Card(models.Model):
         super().save(*args, **kwargs)
 
 class Address(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='addresses')
     street = models.CharField(max_length=100)
     number = models.CharField(max_length=10)
     apartment = models.CharField(max_length=10, blank=True, null=True)
