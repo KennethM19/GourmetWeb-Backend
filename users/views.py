@@ -13,7 +13,8 @@ from .serializers import (
     CardCreateSerializer,
     AddressCreateSerializer,
     AddressUpdateSerializer,
-    PasswordChangeSerializer
+    PasswordChangeSerializer,
+    AddressSerializer
 )
 
 # ---------------------- AUTH ----------------------
@@ -92,6 +93,13 @@ def change_password(request):
 
 # ---------------------- CARD ----------------------
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_cards(request):
+    user_cards= request.user.cards.all()
+    serializer = CardCreateSerializer(user_cards, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def register_card(request):
@@ -110,7 +118,6 @@ def register_card(request):
         return Response({"message": "Tarjeta registrada correctamente."}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_card(request, card_id):
@@ -124,6 +131,13 @@ def delete_card(request, card_id):
 
 
 # ---------------------- ADDRESS ----------------------
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_addresses(request):
+    user_addresses= request.user.addresses.all()
+    serializer = AddressSerializer(user_addresses, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -1,7 +1,11 @@
 from rest_framework import serializers
 from .models import User, Card, Address
 
+# ---------------------- CARD ----------------------
+
 class CardCreateSerializer(serializers.ModelSerializer):
+    is_credit = serializers.BooleanField(default=False)
+
     class Meta:
         model = Card
         fields = ['number', 'date_expired', 'owner', 'is_credit']
@@ -19,6 +23,8 @@ class CardSerializer(serializers.ModelSerializer):
 
     def get_last_four_digits(self, obj):
         return obj.number[-4:]
+
+# ---------------------- ADDRESS ----------------------
 
 class AddressCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,10 +46,12 @@ class AddressUpdateSerializer(serializers.ModelSerializer):
         model = Address
         fields = ['street', 'number', 'apartment', 'district', 'city', 'zip_code']
 
+# ---------------------- USER ----------------------
+
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'password', 'first_name', 'last_name', 'phone', 'role']
+        fields = ['doc_number','email', 'password', 'first_name', 'last_name', 'phone', 'role']
 
     def create(self, validated_data):
         raw_password = validated_data.pop('password')
@@ -58,13 +66,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.StringRelatedField()
-    addresses = AddressSerializer(source='address_set', many=True, read_only=True)
-    cards = CardSerializer(source='card_set', many=True, read_only=True)
+    addresses = AddressSerializer(many=True, read_only=True)
+    cards = CardSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
         exclude = ['password']
-        read_only_fields = ['id', 'date_created']
+        read_only_fields = ['id']
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
