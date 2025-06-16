@@ -43,12 +43,9 @@ EXTERNAL_APPS = [
 ]
 
 INTERNAL_APPS = [
-    'kitchen',
-    'menu',
-    'notifications',
-    'orders',
-    'reservations',
-    'users'
+    'order',
+    'users',
+    'kitchen'
 ]
 
 INSTALLED_APPS = [
@@ -156,6 +153,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # This production code might break development mode, so we check whether we're in DEBUG mode
 if not DEBUG:
