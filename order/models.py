@@ -6,6 +6,9 @@ from django.db.models import Sum, F
 class ProductType(models.Model):
     type = models.CharField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.type
+
 class Product(models.Model):
     productType = models.ForeignKey(ProductType, on_delete=models.CASCADE)
     description = models.TextField()

@@ -52,6 +52,9 @@ class Card(models.Model):
             self.number = self.number[-4:]
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.number}, {self.owner}"
+
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='addresses')
     street = models.CharField(max_length=100)
