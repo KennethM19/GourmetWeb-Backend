@@ -44,8 +44,7 @@ EXTERNAL_APPS = [
 
 INTERNAL_APPS = [
     'order',
-    'users',
-    'kitchen'
+    'users'
 ]
 
 INSTALLED_APPS = [

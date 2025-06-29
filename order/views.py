@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, Order, ProductType
+from .models import Product, Order, ProductType, OrderStatus
 from .serializers import ProductSerializer, ProductCreateSerializer, OrderSerializer, OrderCreateSerializer, ProductTypeSerializer
 
 # Create your views here.
@@ -100,3 +100,44 @@ def delete_order(request, order_id):
         return Response({'error': 'Solo puedes eliminar órdenes pendientes'}, status=status.HTTP_400_BAD_REQUEST)
     order.delete()
     return Response({'message': 'Orden eliminada correctamente'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_pending_orders(request):
+    print("Tipo de role:", type(request.user.role))
+    print("Valor de role:", request.user.role)
+    if str(request.user.role) != 'cocina':
+        return Response({'detail': 'Solo cocineros pueden acceder a esta vista'}, status=status.HTTP_403_FORBIDDEN)
+
+    pending = OrderStatus.objects.filter(status__iexact = 'Pendiente').first()
+
+    if not pending:
+        return Response({'detail': 'No hay órdenes pendientes'}, status=status.HTTP_400_BAD_REQUEST)
+
+    orders = Order.objects.filter(status = pending).select_related('status').prefetch_related('items__product')
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def change_order_status(request, order_id):
+    if str(request.user.role) != 'cocina':
+        return Response({'detail': 'Solo cocineros pueden cambiar el estado de las órdenes'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({'detail': 'Orden no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+    status_id = request.data.get('status_id')
+    if not status_id:
+        return Response({'detail': 'Se requiere "status_id"'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        new_status = OrderStatus.objects.get(id=status_id)
+    except OrderStatus.DoesNotExist:
+        return Response({'detail': 'Estado no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+    order.status = new_status
+    order.save()
+    return Response({'message': f'Estado actualizado a {new_status.status}'}, status=status.HTTP_200_OK)
