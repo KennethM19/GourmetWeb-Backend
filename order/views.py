@@ -95,28 +95,40 @@ def get_order_by_id(request, order_id):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_order(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-    if order.status.status.lower() != "pendiente":
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({'error': 'Orden no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+    if order.status.status.lower() != "pendiente" and str(request.user.role).lower() == 'cliente':
         return Response({'error': 'Solo puedes eliminar órdenes pendientes'}, status=status.HTTP_400_BAD_REQUEST)
+
     order.delete()
     return Response({'message': 'Orden eliminada correctamente'}, status=status.HTTP_204_NO_CONTENT)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def list_pending_orders(request):
-    print("Tipo de role:", type(request.user.role))
-    print("Valor de role:", request.user.role)
-    if str(request.user.role) != 'cocina':
+def list_orders(request):
+    # Solo usuarios con rol 'cocina' pueden acceder
+    if str(request.user.role).lower() != 'cocina':
         return Response({'detail': 'Solo cocineros pueden acceder a esta vista'}, status=status.HTTP_403_FORBIDDEN)
 
-    pending = OrderStatus.objects.filter(status__iexact = 'Pendiente').first()
+    status_param = request.query_params.get('status')  # Captura ?status=Pendiente
 
-    if not pending:
-        return Response({'detail': 'No hay órdenes pendientes'}, status=status.HTTP_400_BAD_REQUEST)
+    if status_param:
+        status_obj = OrderStatus.objects.filter(status__iexact=status_param).first()
+        if not status_obj:
+            return Response({'detail': f'No existe el estado "{status_param}"'}, status=status.HTTP_400_BAD_REQUEST)
+        orders = Order.objects.filter(status=status_obj)
+    else:
+        orders = Order.objects.all()
 
-    orders = Order.objects.filter(status = pending).select_related('status').prefetch_related('items__product')
+    # Optimizar queries
+    orders = orders.select_related('status', 'user').prefetch_related('items__product')
+
     serializer = OrderSerializer(orders, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
