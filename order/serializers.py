@@ -51,11 +51,20 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
         fields = ['product', 'quantity']
 
 class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    items = OrderItemSerializer(many=True)
     status = OrderStatusSerializer()
 
     class Meta:
         model = Order
-        fields = ['id', 'status', 'date_created', 'total_price']
+        fields = ['id', 'user','status', 'date_created', 'total_price', 'items']
+
+    def get_user(self, obj):
+        return {
+            "id": obj.user.id,
+            "first_name": obj.user.first_name,
+            "last_name": obj.user.last_name
+        }
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     items = OrderItemCreateSerializer(many=True)
