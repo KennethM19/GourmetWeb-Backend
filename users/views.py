@@ -105,17 +105,14 @@ def get_cards(request):
 def register_card(request):
     serializer = CardCreateSerializer(data=request.data)
     if serializer.is_valid():
-        data = serializer.validated_data
-        masked_number = f"**** **** **** {data['number'][-4:]}"
+        card = serializer.save(user=request.user)
 
-        Card.objects.create(
-            number=masked_number,
-            date_expired=data['date_expired'],
-            owner=data['owner'],
-            is_credit=data['is_credit'],
-            user=request.user
-        )
+        # Enmascarar el número después de guardarlo
+        card.number = f"**** **** **** {serializer.validated_data['number'][-4:]}"
+        card.save()
+
         return Response({"message": "Tarjeta registrada correctamente."}, status=status.HTTP_201_CREATED)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
