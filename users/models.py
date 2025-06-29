@@ -43,7 +43,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Card(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cards')
     number = models.CharField(max_length=100)
-    date_expired = models.DateTimeField(null=True)
+    exp_month = models.IntegerField()
+    exp_year = models.IntegerField()
     owner = models.CharField(max_length=100)
     is_credit = models.BooleanField(default=False)
 

@@ -8,21 +8,35 @@ class CardCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ['number', 'date_expired', 'owner', 'is_credit']
+        fields = ['number', 'exp_month', 'exp_year', 'owner', 'is_credit']
 
     def validate_number(self, value):
         if not value.isdigit() or len(value) < 13 or len(value) > 19:
             raise serializers.ValidationError("Número de tarjeta inválido.")
         return value
 
+    def validate_exp_month(self, value):
+        if value < 1 or value > 12:
+            raise serializers.ValidationError("El mes debe estar entre 1 y 12.")
+        return value
+
+    def validate_exp_year(self, value):
+        if value < 2024:
+            raise serializers.ValidationError("El año debe ser igual o mayor al actual.")
+        return value
+
 class CardSerializer(serializers.ModelSerializer):
     last_four_digits = serializers.SerializerMethodField()
+    expiration = serializers.SerializerMethodField()
     class Meta:
         model = Card
-        fields = ['id', 'last_four_digits', 'date_expired', 'owner', 'is_credit']
+        fields = ['id', 'last_four_digits', 'expiration', 'owner', 'is_credit']
 
     def get_last_four_digits(self, obj):
         return obj.number[-4:]
+
+    def get_expiration(self, obj):
+        return f"{obj.exp_month:02d}/{obj.exp_year % 100}"
 
 # ---------------------- ADDRESS ----------------------
 
