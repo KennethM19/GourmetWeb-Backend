@@ -11,7 +11,6 @@ from .serializers import ProductSerializer, ProductCreateSerializer, OrderSerial
 # ---------------------- PRODUCT ----------------------
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticatedOrReadOnly])
 def get_products(request):
     products = Product.objects.select_related('productType').all()
     serializer = ProductSerializer(products, many=True)
