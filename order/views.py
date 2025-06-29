@@ -27,7 +27,6 @@ def create_product(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticatedOrReadOnly])
 def get_product_by_id(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     serializer = ProductSerializer(product)
