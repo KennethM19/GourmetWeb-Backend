@@ -10,6 +10,7 @@ from .serializers import (
     UserCreateSerializer,
     UserSerializer,
     UserUpdateSerializer,
+    CardSerializer,
     CardCreateSerializer,
     AddressCreateSerializer,
     AddressUpdateSerializer,
@@ -97,7 +98,7 @@ def change_password(request):
 @permission_classes([IsAuthenticated])
 def get_cards(request):
     user_cards= request.user.cards.all()
-    serializer = CardCreateSerializer(user_cards, many=True)
+    serializer = CardSerializer(user_cards, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])

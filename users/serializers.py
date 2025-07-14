@@ -50,7 +50,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Address
-        fields = ['full_address']
+        fields = ['id','full_address']
 
     def get_full_address(self, obj):
         return f"{obj.street} - {obj.number}, {obj.district}, {obj.city}"
