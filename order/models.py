@@ -15,6 +15,9 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField()
     image = models.ImageField(upload_to='productImages/', blank=True, null=True)
+    available = models.BooleanField(default=True)
+    cant_available = models.IntegerField(default=0)
+    date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

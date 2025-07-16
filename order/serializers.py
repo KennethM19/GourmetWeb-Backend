@@ -53,7 +53,7 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     items = OrderItemSerializer(many=True)
-    status = OrderStatusSerializer()
+    status = serializers.CharField(source='status.status')
 
     class Meta:
         model = Order
@@ -71,7 +71,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['status', 'items']
+        fields = ['items']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
