@@ -35,12 +35,13 @@ class OrderStatusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrderItemSerializer(serializers.ModelSerializer):
-
-    product = ProductSerializer()
+    product_id = serializers.IntegerField(source='product.id')
+    product_name = serializers.CharField(source='product.name')
+    product_price = serializers.FloatField(source='product.price')
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity']
+        fields = ['product_id', 'product_name', 'product_price', 'quantity']
 
 class OrderItemCreateSerializer(serializers.ModelSerializer):
 
@@ -51,27 +52,23 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
         fields = ['product', 'quantity']
 
 class OrderSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-    items = OrderItemSerializer(many=True)
-    status = OrderStatusSerializer()
+    items = OrderItemSerializer(many=True, read_only=True)
+    status = serializers.CharField(source='status.status')
+    user_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['id', 'user','status', 'date_created', 'total_price', 'items']
+        fields = ['id', 'user_name', 'status', 'date_created', 'total_price', 'items']
 
-    def get_user(self, obj):
-        return {
-            "id": obj.user.id,
-            "first_name": obj.user.first_name,
-            "last_name": obj.user.last_name
-        }
+    def get_user_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     items = OrderItemCreateSerializer(many=True)
 
     class Meta:
         model = Order
-        fields = ['status', 'items']
+        fields = ['items']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')

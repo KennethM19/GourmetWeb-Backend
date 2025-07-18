@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import get_products, get_product_by_id, create_product, update_product, delete_product, get_orders, get_order_by_id, create_order, delete_order, get_product_types, create_product_type, list_orders, change_order_status
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('products/', get_products, name='get_products'),
@@ -15,4 +17,4 @@ urlpatterns = [
     path('product-types/create/', create_product_type, name='create_product_type'),
     path('orders-list/', list_orders, name='list_orders'),
     path('<int:order_id>/change-status/', change_order_status, name='cook_change_order_status'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
