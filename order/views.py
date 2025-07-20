@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
-
+from .tasks import send_order_receipt_email
 from .models import Product, Order, ProductType, OrderStatus
 from .serializers import ProductSerializer, ProductCreateSerializer, OrderSerializer, OrderCreateSerializer, \
     ProductTypeSerializer
@@ -92,6 +92,24 @@ def create_order(request):
     serializer = OrderCreateSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         order = serializer.save()
+        order_data = {
+            "id": order.id,
+            "user_name": request.user.get_full_name(),
+            "status": order.status.status,
+            "date_created": order.date_created.isoformat(),
+            "total_price": str(order.total_price),
+            "items": [
+                {
+                    "product_id": item.product.id,
+                    "product_name": item.product.name,
+                    "product_price": float(item.product.price),
+                    "quantity": item.quantity
+                } for item in order.items.all()
+            ]
+        }
+
+        # Llamar a la tarea asíncrona
+        send_order_receipt_email.delay(request.user.email, order_data)
         return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

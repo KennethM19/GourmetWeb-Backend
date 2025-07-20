@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: gourmet-backend
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: gunicorn GourmetWeb_Backend.wsgi:application
+    envVars:
+      - key: REDIS_URL
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      # Añade aquí tus otras variables
+
+  - type: worker
+    name: celery-worker
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: celery -A GourmetWeb_Backend worker --loglevel=info
+    envVars:
+      - fromService:
+          name: gourmet-backend
+          type: web
