@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from reservations.tasks import send_reservation_email
 from .models import Reservation, ReservationStatus, Table
 from .serializers import (
     ReservationSerializer,
@@ -53,6 +53,14 @@ def create_reservation(request):
                 phone=phone,
                 notes=notes,
                 status=pending_status
+            )
+
+            send_reservation_email.delay(
+                request.user.email,
+                request.user.first_name,
+                str(reservation.date),
+                str(reservation.time),
+                reservation.table.number
             )
 
             return Response(ReservationSerializer(reservation).data, status=status.HTTP_201_CREATED)
