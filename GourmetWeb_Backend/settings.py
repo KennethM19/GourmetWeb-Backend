@@ -44,7 +44,8 @@ EXTERNAL_APPS = [
 
 INTERNAL_APPS = [
     'order',
-    'users'
+    'users',
+    'reservations',
 ]
 
 INSTALLED_APPS = [
