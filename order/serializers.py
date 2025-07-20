@@ -1,11 +1,10 @@
-from operator import itemgetter
-
-from rest_framework import serializers
-from .models import Product, ProductType, Order, OrderItem, OrderStatus
-from users.serializers import UserSerializer
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+from .models import Product, ProductType, Order, OrderItem, OrderStatus
 
 User = get_user_model()
+
 
 # ---------------------- PRODUCT ----------------------
 
@@ -13,6 +12,7 @@ class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductType
         fields = '__all__'
+
 
 class ProductSerializer(serializers.ModelSerializer):
     productType = ProductTypeSerializer()
@@ -22,10 +22,12 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
 
 # ---------------------- ORDER ----------------------
 
@@ -33,6 +35,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderStatus
         fields = '__all__'
+
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='product.id')
@@ -43,13 +46,14 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['product_id', 'product_name', 'product_price', 'quantity']
 
-class OrderItemCreateSerializer(serializers.ModelSerializer):
 
+class OrderItemCreateSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
 
     class Meta:
         model = OrderItem
         fields = ['product', 'quantity']
+
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
@@ -62,6 +66,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_user_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}"
+
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     items = OrderItemCreateSerializer(many=True)

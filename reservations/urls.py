@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import get_reservations, get_reservation_by_id, create_reservation, cancel_reservation
 
 urlpatterns = [

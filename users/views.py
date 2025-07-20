@@ -1,9 +1,9 @@
+from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.hashers import check_password
 
 from .models import User, Card, Address
 from .serializers import (
@@ -17,6 +17,7 @@ from .serializers import (
     PasswordChangeSerializer,
     AddressSerializer
 )
+
 
 # ---------------------- AUTH ----------------------
 
@@ -97,9 +98,10 @@ def change_password(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_cards(request):
-    user_cards= request.user.cards.all()
+    user_cards = request.user.cards.all()
     serializer = CardSerializer(user_cards, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -115,6 +117,7 @@ def register_card(request):
         return Response({"message": "Tarjeta registrada correctamente."}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -133,9 +136,10 @@ def delete_card(request, card_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_addresses(request):
-    user_addresses= request.user.addresses.all()
+    user_addresses = request.user.addresses.all()
     serializer = AddressSerializer(user_addresses, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

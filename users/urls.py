@@ -1,10 +1,11 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+
 from .views import (
     register, login, get_user, update_user, delete_user, change_password,
     get_cards, register_card, delete_card,
     get_addresses, register_address, update_address, delete_address
 )
-from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     # Autenticación

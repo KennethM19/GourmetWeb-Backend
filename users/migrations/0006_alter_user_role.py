@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('users', '0005_remove_card_cvv_user_groups_user_is_active_and_more'),
     ]

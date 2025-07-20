@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from .models import User, Card, Address
+
 
 # ---------------------- CARD ----------------------
 
@@ -25,9 +27,11 @@ class CardCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El año debe ser igual o mayor al actual.")
         return value
 
+
 class CardSerializer(serializers.ModelSerializer):
     last_four_digits = serializers.SerializerMethodField()
     expiration = serializers.SerializerMethodField()
+
     class Meta:
         model = Card
         fields = ['id', 'last_four_digits', 'expiration', 'owner', 'is_credit']
@@ -38,6 +42,7 @@ class CardSerializer(serializers.ModelSerializer):
     def get_expiration(self, obj):
         return f"{obj.exp_month:02d}/{obj.exp_year % 100}"
 
+
 # ---------------------- ADDRESS ----------------------
 
 class AddressCreateSerializer(serializers.ModelSerializer):
@@ -45,27 +50,30 @@ class AddressCreateSerializer(serializers.ModelSerializer):
         model = Address
         fields = ['street', 'number', 'apartment', 'district', 'city', 'zip_code']
 
+
 class AddressSerializer(serializers.ModelSerializer):
     full_address = serializers.SerializerMethodField()
 
     class Meta:
         model = Address
-        fields = ['id','full_address']
+        fields = ['id', 'full_address']
 
     def get_full_address(self, obj):
         return f"{obj.street} - {obj.number}, {obj.district}, {obj.city}"
+
 
 class AddressUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ['street', 'number', 'apartment', 'district', 'city', 'zip_code']
 
+
 # ---------------------- USER ----------------------
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['doc_number','email', 'password', 'first_name', 'last_name', 'phone', 'role']
+        fields = ['doc_number', 'email', 'password', 'first_name', 'last_name', 'phone', 'role']
 
     def create(self, validated_data):
         raw_password = validated_data.pop('password')
@@ -78,6 +86,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         from django.contrib.auth.hashers import make_password
         return make_password(raw_password)
 
+
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.StringRelatedField()
     addresses = AddressSerializer(many=True, read_only=True)
@@ -88,10 +97,12 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ['password']
         read_only_fields = ['id']
 
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'phone']
+
 
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)

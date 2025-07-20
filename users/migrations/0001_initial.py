@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -21,7 +20,9 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=100)),
                 ('last_name', models.CharField(max_length=100)),
                 ('email', models.EmailField(max_length=100, unique=True)),
-                ('phone', models.CharField(blank=True, max_length=15, null=True, validators=[django.core.validators.RegexValidator(message='Formato inválido para el número de teléfono.', regex='^\\+?1?\\d{9,15}$')], verbose_name='Phone')),
+                ('phone', models.CharField(blank=True, max_length=15, null=True, validators=[
+                    django.core.validators.RegexValidator(message='Formato inválido para el número de teléfono.',
+                                                          regex='^\\+?1?\\d{9,15}$')], verbose_name='Phone')),
                 ('password', models.CharField(max_length=100)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('role', models.CharField(max_length=100)),

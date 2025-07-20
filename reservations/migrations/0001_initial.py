@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -36,9 +35,12 @@ class Migration(migrations.Migration):
                 ('date', models.DateField()),
                 ('time', models.TimeField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservation', to=settings.AUTH_USER_MODEL)),
-                ('status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to='reservations.reservationstatus')),
-                ('table', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to='reservations.table')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservation',
+                                           to=settings.AUTH_USER_MODEL)),
+                ('status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservations',
+                                             to='reservations.reservationstatus')),
+                ('table', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservations',
+                                            to='reservations.table')),
             ],
             options={
                 'unique_together': {('table', 'date', 'time')},

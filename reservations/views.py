@@ -1,21 +1,24 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
+
 from .models import Reservation, ReservationStatus, Table
 from .serializers import (
     ReservationSerializer,
     ReservationCreateSerializer
 )
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_reservations(request):
-    reservations = Reservation.objects.filter(user=request.user)\
+    reservations = Reservation.objects.filter(user=request.user) \
         .select_related('table', 'status')
     serializer = ReservationCreateSerializer(reservations, many=True)
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -64,6 +67,7 @@ def get_reservation_by_id(request, reservation_id):
     serializer = ReservationSerializer(reservation)
     return Response(serializer.data)
 
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def cancel_reservation(request, reservation_id):
@@ -71,7 +75,8 @@ def cancel_reservation(request, reservation_id):
     cancelled_status = ReservationStatus.objects.filter(status__iexact='cancelada').first()
 
     if not cancelled_status:
-        return Response({'error': 'No se ha configurado el estado "cancelada".'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'No se ha configurado el estado "cancelada".'},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if reservation.status == cancelled_status:
         return Response({'error': 'La reservación ya fue cancelada.'}, status=status.HTTP_400_BAD_REQUEST)

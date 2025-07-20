@@ -1,6 +1,7 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.db.models import Sum, F
+
 
 # Create your models here.
 class ProductType(models.Model):
@@ -8,6 +9,7 @@ class ProductType(models.Model):
 
     def __str__(self):
         return self.type
+
 
 class Product(models.Model):
     productType = models.ForeignKey(ProductType, on_delete=models.CASCADE)
@@ -22,12 +24,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
 class OrderStatus(models.Model):
     status = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.status}"
+
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
@@ -37,12 +41,13 @@ class Order(models.Model):
 
     def update_total_price(self):
         total = self.items.aggregate(
-            total = Sum(F('quantity') * F('product__price')))['total'] or 0
+            total=Sum(F('quantity') * F('product__price')))['total'] or 0
         self.total_price = total
         self.save()
 
     def __str__(self):
         return f"Pedido #{self.id} de {self.user}, {self.status}"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')

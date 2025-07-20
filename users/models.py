@@ -1,7 +1,8 @@
-from django.core.validators import RegexValidator
-from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.validators import RegexValidator
+from django.db import models
+
 from .managers import CustomUserManager
 
 
@@ -11,6 +12,7 @@ class Roles(models.Model):
 
     def __str__(self):
         return self.role
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     doc_number = models.CharField(max_length=100, unique=True)
@@ -40,6 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+
 class Card(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cards')
     number = models.CharField(max_length=100)
@@ -55,6 +58,7 @@ class Card(models.Model):
 
     def __str__(self):
         return f"{self.number}, {self.owner}"
+
 
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='addresses')

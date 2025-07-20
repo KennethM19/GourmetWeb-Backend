@@ -1,10 +1,13 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework import status
+
 from .models import Product, Order, ProductType, OrderStatus
-from .serializers import ProductSerializer, ProductCreateSerializer, OrderSerializer, OrderCreateSerializer, ProductTypeSerializer
+from .serializers import ProductSerializer, ProductCreateSerializer, OrderSerializer, OrderCreateSerializer, \
+    ProductTypeSerializer
+
 
 # Create your views here.
 
@@ -17,6 +20,7 @@ def get_products(request):
     serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def create_product(request):
@@ -27,11 +31,13 @@ def create_product(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def get_product_by_id(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     serializer = ProductSerializer(product)
     return Response(serializer.data)
+
 
 @api_view(['PUT'])
 @permission_classes([IsAdminUser])  # Solo admin/staff puede editar
@@ -43,12 +49,14 @@ def update_product(request, product_id):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])  # Solo admin/staff puede eliminar
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product.delete()
     return Response({'message': 'Producto eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])  # Solo admins pueden crear tipos
@@ -59,12 +67,14 @@ def create_product_type(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def get_product_types(request):
     types = ProductType.objects.all()
     serializer = ProductTypeSerializer(types, many=True)
     return Response(serializer.data)
+
 
 # ---------------------- ORDER ----------------------
 
@@ -75,6 +85,7 @@ def get_orders(request):
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_order(request):
@@ -84,12 +95,14 @@ def create_order(request):
         return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_order_by_id(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     serializer = OrderSerializer(order)
     return Response(serializer.data)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -129,11 +142,13 @@ def list_orders(request):
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def change_order_status(request, order_id):
     if str(request.user.role) != 'cocina':
-        return Response({'detail': 'Solo cocineros pueden cambiar el estado de las órdenes'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'detail': 'Solo cocineros pueden cambiar el estado de las órdenes'},
+                        status=status.HTTP_403_FORBIDDEN)
 
     try:
         order = Order.objects.get(id=order_id)

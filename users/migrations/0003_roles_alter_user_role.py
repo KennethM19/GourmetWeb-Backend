@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('users', '0002_rename_doc_identity_user_doc_number'),
     ]

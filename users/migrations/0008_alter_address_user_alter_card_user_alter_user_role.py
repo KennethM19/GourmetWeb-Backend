@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('users', '0007_remove_address_region_alter_address_user'),
     ]
@@ -15,16 +14,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='address',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='addresses', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='addresses',
+                                    to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
             model_name='card',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cards', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cards',
+                                    to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
             model_name='user',
             name='role',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='user', to='users.roles'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='user',
+                                    to='users.roles'),
         ),
     ]
