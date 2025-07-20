@@ -1,0 +1,15 @@
+Hola {{ user_name }},
+
+Gracias por tu pedido en Gourmet. Aquí están los detalles:
+
+Estado: {{ status }}
+Fecha: {{ date_created }}
+
+Productos:
+{% for item in items %}
+- {{ item.quantity }} x {{ item.product_name }} (S/ {{ item.product_price }})
+{% endfor %}
+
+Total a pagar: S/ {{ total_price }}
+
+¡Gracias por tu compra!
