@@ -12,8 +12,8 @@ class ReservationStatusSerializer(serializers.ModelSerializer):
         fields = ['id', 'status']
 
 class ReservationSerializer(serializers.ModelSerializer):
-    table = TableSerializer()
-    status = ReservationStatusSerializer()
+    table = serializers.IntegerField(source='table.number')
+    status = serializers.CharField(source='status.status')
 
     class Meta:
         model = Reservation
@@ -22,19 +22,9 @@ class ReservationSerializer(serializers.ModelSerializer):
 class ReservationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ['table', 'date', 'time']
-
-    def validate(self, data):
-        table = data['table']
-        date = data['date']
-        time = data['time']
-
-        if Reservation.objects.filter(table=table, date=date, time=time).exists():
-            raise serializers.ValidationError('La mesa ya está reservada en ese horario.')
-
-        return data
+        fields = ['id', 'date', 'time', 'people', 'phone', 'notes', 'table', 'status', 'created_at']
+        read_only_fields = ['table', 'status', 'created_at']
 
     def create(self, validated_data):
         user = self.context['request'].user
         return Reservation.objects.create(user=user, **validated_data)
-
